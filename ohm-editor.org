@@ -1,0 +1,93 @@
+* Ohm vs REGEX
+** Pattern Matching DSL
+*** REGEX is a Pattern Matching DSL
+** Ohm is better than REGEX
+*** Ohm allows calling of rules
+**** akaa PDFA
+** Ohm is accessible to Mortal Programmers
+   Don't need to know compiler theory.   
+* Ohm Major Advancements
+** pattern match dsl remains unspoiled by details
+** PEG editor for rapid debugging
+* Ohm Editor
+** Why?
+*** Editing a grammar manually can take about 1 day
+**** Whitespace is often the issue (a minor detail, but a detail nonetheless)
+*** Editing a grammar in Ohm Editor takes 10's of minutes
+*** Newbies
+    Ohm Editor elides details
+    Allows one to concentrate on pattern matching
+*** Experienced Architects
+    DI (Design Intent) is unspoiled when using Ohm
+    Ohm Editor allows the easy part to remain easy, less manual debugging
+     
+
+* Ohm Editor Default
+** default
+  url https://ohmlang.github.io/editor/
+  pull down menu and select "arithmetic"
+** 4 frames
+*** Grammar (pattern match dsl)
+*** Examples (test cases)
+*** input text (one line in middle)
+*** CST (concrete parse tree of text, aka AST) (bottom frame)
+* Errors
+** error in grammar
+** error during parse
+* A Real Example - SVG matching
+** SVG grammar
+   (https://github.com/guitarvydas/svgtranspile/blob/main/svg.ohm)
+HTMLSVG {
+  htmlsvg = ws* docTypeHeader htmlHeader bodyHeader element+ bodyEnd htmlEnd
+  htmlHeader = "<html>" ws*
+  htmlEnd = "</html>" ws*
+  bodyHeader = "<body>" ws*
+  bodyEnd = "</body>" ws*
+  docTypeHeader = "<!DOCTYPE" stuff* ">" ws* 
+
+  element = svgElement | rectElement | textElement | basicElement
+  svgElement = "<" "svg" ws* attribute* ">" ws* element* text* "</" "svg" ">" ws*
+  rectElement = "<" "rect" ws* attribute* ">" ws* element* text* "</" "rect" ">" ws*
+  textElement = "<" "text" ws* attribute* ">" ws* element* text* "</" "text" ">" ws*
+  basicElement = "<" name ws* attribute* ">" ws* element* text* "</" name ">" ws*
+
+  attribute =  widthAttribute | heightAttribute | xAttribute | yAttribute | fillAttribute
+             | genericAttribute
+  widthAttribute = "width" "=" string ws*
+  heightAttribute = "height" "=" string ws*
+  xAttribute = "x" "=" string ws*
+  yAttribute = "y" "=" string ws*
+  fillAttribute = "fill" "=" string ws*
+  genericAttribute = name "=" string ws*
+
+  text = stuff
+  name = name1st nameFollow*
+  name1st = "a" .. "z" | "A" .. "Z"
+  nameFollow = "0" .. "9" | name1st
+
+  stuff = ~">" ~"/>" ~"<" ~"?>" any
+
+  string = "\"" notQ* "\""
+  notQ = ~"\"" any
+  ws = " " | "\n" | "\t"
+}
+
+** Test.svg
+   (https://github.com/guitarvydas/svgtranspile/edit/main/test.svg)
+<!DOCTYPE html>
+<html>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="510">
+  <rect width="200" height="100" fill="lightyellow" style="stroke-width:1;stroke:black" ></rect>
+    <text x="100" y="55" fill="black">output</text>
+    <text x="300" y="55" fill="black">floating</text>
+
+  Sorry, your browser does not support inline SVG.  
+</svg>
+ 
+</body>
+</html>
+
+** Further
+   https://guitarvydas.github.io/2021/03/18/Little-Language.html
